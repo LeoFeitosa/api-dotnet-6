@@ -24,6 +24,12 @@ namespace FilmesApi.Controllers
             return filmes.Skip(skip).Take(take);
         }
 
-
+        [HttpGet("{id}")]
+        public IActionResult RecuperaFilmePorId(int id)
+        {
+            var filme = filmes.FirstOrDefault(filme => filme.Id == id);
+            if (filme == null) return NotFound();
+            return Ok(filme);
+        }
     }
 }
