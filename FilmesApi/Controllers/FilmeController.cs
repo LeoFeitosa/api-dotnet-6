@@ -12,10 +12,11 @@ namespace FilmesApi.Controllers
         private static int _id = 0;
 
         [HttpPost]
-        public void AdicionaFilme([FromBody] Filme filme)
+        public IActionResult AdicionaFilme([FromBody] Filme filme)
         {
             filme.Id = _id++;
             filmes.Add(filme);
+            return CreatedAtAction(nameof(RecuperaFilmePorId), new { id = filme.Id }, filme);
         }
 
         [HttpGet]
