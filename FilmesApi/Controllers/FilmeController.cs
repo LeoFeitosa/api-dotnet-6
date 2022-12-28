@@ -1,35 +1,39 @@
+using FilmesApi.Data;
 using FilmesApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FilmesApi.Controllers
+namespace FilmesApi.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class FilmeController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class FilmeController : ControllerBase
+    private FilmeContext _context;
+
+    public FilmeController(FilmeContext context)
     {
-        private static List<Filme> filmes = new List<Filme>();
-        private static int _id = 0;
+        _context = context;
+    }
 
-        [HttpPost]
-        public IActionResult AdicionaFilme([FromBody] Filme filme)
-        {
-            filme.Id = _id++;
-            filmes.Add(filme);
-            return CreatedAtAction(nameof(RecuperaFilmePorId), new { id = filme.Id }, filme);
-        }
+    [HttpPost]
+    public IActionResult AdicionaFilme([FromBody] Filme filme)
+    {
+        _context.Filmes.Add(filme);
+        _context.SaveChanges();
+        return CreatedAtAction(nameof(RecuperaFilmePorId), new { id = filme.Id }, filme);
+    }
 
-        [HttpGet]
-        public IEnumerable<Filme> RecuperaFilmes([FromQuery] int skip = 0, [FromQuery] int take = 5)
-        {
-            return filmes.Skip(skip).Take(take);
-        }
+    [HttpGet]
+    public IEnumerable<Filme> RecuperaFilmes([FromQuery] int skip = 0, [FromQuery] int take = 5)
+    {
+        return _context.Filmes.Skip(skip).Take(take);
+    }
 
-        [HttpGet("{id}")]
-        public IActionResult RecuperaFilmePorId(int id)
-        {
-            var filme = filmes.FirstOrDefault(filme => filme.Id == id);
-            if (filme == null) return NotFound();
-            return Ok(filme);
-        }
+    [HttpGet("{id}")]
+    public IActionResult RecuperaFilmePorId(int id)
+    {
+        var filme = _context.Filmes.FirstOrDefault(filme => filme.Id == id);
+        if (filme == null) return NotFound();
+        return Ok(filme);
     }
 }
