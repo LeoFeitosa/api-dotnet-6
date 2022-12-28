@@ -1,4 +1,3 @@
-using System;
 using FilmesApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
